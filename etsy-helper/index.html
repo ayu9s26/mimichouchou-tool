@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Etsy出品サポート | mimichouchou</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f2ee; --card:#ffffff; --border:#e2ddd8; --text:#2a2522; --muted:#8a827a;
+  --green:#4a7a62; --gl:#B2DEC6; --gm:#88c4a8; --accent:#c4785a; --radius:16px; --rsm:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Zen Kaku Gothic New',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:50px;}
+
+.header{background:var(--green);color:white;padding:18px 20px 14px;position:sticky;top:0;z-index:100;}
+.header-inner{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.header h1{font-family:'Shippori Mincho',serif;font-size:16px;font-weight:600;letter-spacing:0.05em;}
+.hsub{font-size:10px;opacity:0.7;margin-top:2px;}
+
+.main{max-width:520px;margin:0 auto;padding:20px 16px;display:flex;flex-direction:column;gap:16px;}
+
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.card-header{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.cicon{width:32px;height:32px;border-radius:8px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ctitle{font-size:14px;font-weight:700;color:var(--green);}
+.cdesc{font-size:11px;color:var(--muted);margin-top:1px;}
+.card-body{padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
+
+.field{display:flex;flex-direction:column;gap:5px;}
+label{font-size:12px;font-weight:700;color:var(--green);}
+.req{color:var(--accent);font-size:10px;margin-left:4px;}
+input[type="text"],input[type="number"],textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--rsm);font-size:14px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--text);background:#fdfcfb;transition:border-color 0.2s;outline:none;-webkit-appearance:none;}
+input:focus,textarea:focus{border-color:var(--gm);background:white;}
+textarea{resize:vertical;min-height:80px;line-height:1.6;}
+.hint{font-size:11px;color:var(--muted);line-height:1.5;}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;}
+.topt{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);font-size:12px;color:var(--muted);cursor:pointer;background:white;transition:all 0.15s;user-select:none;}
+.topt.on{background:var(--green);border-color:var(--green);color:white;}
+
+.gen-btn{width:100%;padding:16px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;letter-spacing:0.05em;}
+.gen-btn:active{transform:scale(0.98);}
+
+.result-box{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;display:none;}
+.result-box.on{display:block;}
+.result-header{padding:14px 18px 12px;background:var(--gl);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.result-title{font-size:13px;font-weight:700;color:var(--green);}
+.cbtn{padding:8px 16px;background:var(--green);color:white;border:none;border-radius:20px;font-size:12px;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;font-weight:700;transition:all 0.15s;}
+.cbtn.done{background:var(--accent);}
+.result-text{padding:16px 18px;font-size:13px;line-height:1.9;color:var(--text);white-space:pre-wrap;word-break:break-all;}
+
+.steps{background:var(--gl);border-radius:var(--radius);padding:16px 18px;}
+.steps-title{font-size:13px;font-weight:700;color:var(--green);margin-bottom:12px;}
+.step-item{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+.step-item:last-child{margin-bottom:0;}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--green);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-text{font-size:12px;color:var(--text);line-height:1.65;}
+
+.back-link{text-align:center;padding:4px;}
+.back-link a{font-size:12px;color:var(--muted);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1>🛍️ Etsy 英語出品サポート</h1>
+      <div class="hsub">日本語で入力するだけで、Claude.ai用プロンプトが完成</div>
+    </div>
+    <div style="font-size:22px">🌿</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="steps">
+    <div class="steps-title">使い方（3ステップ）</div>
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-text">下のフォームに作品情報を日本語で入力する</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-text">「プロンプトを作成」ボタンを押してコピーする</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-text"><a href="https://claude.ai" target="_blank" style="color:var(--green);font-weight:700;">claude.ai</a> のチャットに貼り付けると、Etsy用英語文が完成！</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="cicon">✏️</div>
+      <div>
+        <div class="ctitle">作品情報を入力</div>
+        <div class="cdesc">必須だけ入れればOK。多いほど精度が上がります</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="field">
+        <label>商品名（日本語）<span class="req">必須</span></label>
+        <input type="text" id="f-name" placeholder="例：カエルの梅雨クッキー缶マグネット">
+      </div>
+
+      <div class="field">
+        <label>テーマ・世界観<span class="req">必須</span></label>
+        <textarea id="f-theme" placeholder="例：梅雨、カエル、紫陽花、日本の季節感、癒し系ミニチュア、図鑑のような可愛さ"></textarea>
+        <div class="hint">作品の雰囲気・コンセプトを自由に書いてください</div>
+      </div>
+
+      <div class="field">
+        <label>素材・技法</label>
+        <input type="text" id="f-material" placeholder="例：樹脂粘土、手描きデザイン、ミニチュアフード">
+      </div>
+
+      <div class="field">
+        <label>サイズ・重さ（目安）</label>
+        <input type="text" id="f-size" placeholder="例：直径3cm・厚さ5mm・約5g">
+      </div>
+
+      <div class="field">
+        <label>参考価格（円）</label>
+        <input type="number" id="f-price" placeholder="例：2500">
+        <div class="hint">ドル換算のアドバイスに使います</div>
+      </div>
+
+      <div class="field">
+        <label>カスタムオーダー</label>
+        <div class="tag-row">
+          <span class="topt on" data-val="no" onclick="toggleCustom(this)">受け付けていない</span>
+          <span class="topt" data-val="yes" onclick="toggleCustom(this)">受け付けている</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>その他・特記事項</label>
+        <textarea id="f-notes" placeholder="例：1点1点手作りのため個体差あり、発送まで3〜5営業日" style="min-height:64px;"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="gen-btn" onclick="generate()">
+    ✨ Etsy用プロンプトを作成
+  </button>
+
+  <div class="result-box" id="result-box">
+    <div class="result-header">
+      <div class="result-title">📋 Claude.aiに貼り付けるプロンプト</div>
+      <button class="cbtn" id="copy-btn" onclick="copyPrompt()">コピー</button>
+    </div>
+    <div class="result-text" id="result-text"></div>
+  </div>
+
+  <div class="back-link">
+    <a href="../">← 投稿おたすけツールに戻る</a>
+  </div>
+
+</div>
+
+<script>
+let customOrder = 'no';
+
+function toggleCustom(el) {
+  document.querySelectorAll('.topt[data-val]').forEach(e => e.classList.remove('on'));
+  el.classList.add('on');
+  customOrder = el.dataset.val;
+}
+
+function generate() {
+  const name = document.getElementById('f-name').value.trim();
+  const theme = document.getElementById('f-theme').value.trim();
+  const material = document.getElementById('f-material').value.trim();
+  const size = document.getElementById('f-size').value.trim();
+  const price = document.getElementById('f-price').value.trim();
+  const notes = document.getElementById('f-notes').value.trim();
+
+  if (!name || !theme) {
+    alert('「商品名」と「テーマ・世界観」は必須です');
+    return;
+  }
+
+  const lines = [
+    `商品名（日本語）：${name}`,
+    `テーマ・世界観：${theme}`,
+    material && `素材・技法：${material}`,
+    size && `サイズ・重さ：${size}`,
+    price && `参考価格：¥${Number(price).toLocaleString()}円（ドル換算も提示してください）`,
+    `カスタムオーダー：${customOrder === 'yes' ? '受け付けています（要相談）' : '受け付けていません'}`,
+    notes && `その他：${notes}`,
+  ].filter(Boolean).join('\n');
+
+  const prompt = `あなたはEtsyで日本のハンドメイド作品を海外に販売するプロのコピーライターです。
+以下の商品情報をもとに、Etsyで実際に売れる英語の出品文を作成してください。
+
+━━━ 商品情報 ━━━
+${lines}
+━━━━━━━━━━━━━━━
+
+以下の4点を日本語の説明つきで作成してください：
+
+【1】タイトル案（3〜5案）
+・検索されやすいキーワードを文の先頭に置くこと（例：Miniature Clay Cookie Magnet ...）
+・80文字以内
+・"handmade" "Japanese" "miniature" "kawaii" のいずれかを必ず含む
+・ブランド名ではなく作品の特徴から始めること
+・各案に「なぜこのタイトルが良いか」を一言で添えること
+
+【2】商品説明文（英語・400〜600文字）
+・最初の1〜2文でフックを作ること（Etsyは最初の約140文字しか折り畳み前に見えない）
+・日本の手仕事・職人技のストーリーを自然に入れること
+・素材・技法・サイズの具体情報
+・おすすめの飾り方・使い方・ギフトとしての魅力
+・最後に「Handmade in Japan」「Ships from Japan」の一文を入れること
+
+【3】タグ（13個・英語）
+・具体的なキーワードから汎用キーワードまでバランスよく混ぜること
+・スラッシュ区切りで一行に並べること（例：miniature food magnet / kawaii gift japan / ...）
+
+【4】出品のヒント（2〜3文）
+・この商品の写真で特に重要なポイント（1枚目の写真が売上を左右します）
+・価格設定についてのアドバイス（円→ドル換算・Etsyでの相場感を含めて）`;
+
+  document.getElementById('result-text').textContent = prompt;
+  const box = document.getElementById('result-box');
+  box.classList.add('on');
+  setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+
+  const btn = document.getElementById('copy-btn');
+  btn.textContent = 'コピー';
+  btn.classList.remove('done');
+}
+
+function copyPrompt() {
+  const text = document.getElementById('result-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✅ コピー済';
+    btn.classList.add('done');
+    setTimeout(() => {
+      btn.textContent = 'コピー';
+      btn.classList.remove('done');
+    }, 3000);
+  });
+}
+</script>
+</body>
+</html>
