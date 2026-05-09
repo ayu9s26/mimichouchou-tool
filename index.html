@@ -8,7 +8,7 @@
 <style>
 :root {
   --bg:#f5f2ee; --card:#ffffff; --border:#e2ddd8; --text:#2a2522; --muted:#8a827a;
-  --green:#3a5a4a; --gl:#e8f0ec; --gm:#9ab8a8; --accent:#c4785a; --radius:16px; --rsm:10px;
+  --green:#4a7a62; --gl:#B2DEC6; --gm:#88c4a8; --accent:#c4785a; --radius:16px; --rsm:10px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Zen Kaku Gothic New',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:50px;}
@@ -103,6 +103,31 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 </div>
 
 <div class="main">
+
+  <!-- APIキー設定 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="cicon">🔑</div>
+      <div>
+        <div class="ctitle">APIキー設定</div>
+        <div class="cdesc">Anthropic APIキーを入力してください（初回のみ）</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label>APIキー</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;">
+          <button onclick="saveApiKey()" style="padding:10px 14px;background:var(--green);color:white;border:none;border-radius:var(--rsm);font-size:13px;font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;">保存</button>
+        </div>
+        <div class="hint">
+          💡 取得方法：<a href="https://console.anthropic.com" target="_blank" style="color:var(--green);">console.anthropic.com</a> でアカウント作成 → API Keys → Create Key<br>
+          　 入力したキーはこのデバイスにのみ保存されます（外部送信なし）
+        </div>
+        <div id="api-key-status" style="display:none;font-size:12px;margin-top:4px;"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- 投稿先選択 -->
   <div class="card">
@@ -315,6 +340,33 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 </div>
 
 <script>
+// APIキーの保存・読み込み
+function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) return;
+  localStorage.setItem('anthropic_api_key', key);
+  const status = document.getElementById('api-key-status');
+  status.style.display = 'block';
+  status.style.color = 'var(--green)';
+  status.textContent = '✅ 保存しました！次回からは自動で読み込まれます';
+  setTimeout(() => { status.style.display = 'none'; }, 3000);
+}
+
+function loadApiKey() {
+  const key = localStorage.getItem('anthropic_api_key');
+  if (key) {
+    document.getElementById('api-key-input').value = key;
+    const status = document.getElementById('api-key-status');
+    status.style.display = 'block';
+    status.style.color = 'var(--muted)';
+    status.textContent = '🔑 保存済みのAPIキーを読み込みました';
+  }
+}
+
+function getApiKey() {
+  return document.getElementById('api-key-input').value.trim();
+}
+
 function addPhotoTag() {
   const input = document.getElementById('photo-other-input');
   const val = input.value.trim();
@@ -338,8 +390,12 @@ function addPhotoTag() {
 
 // Enterキーでも追加できる
 document.addEventListener('DOMContentLoaded', () => {
+  loadApiKey();
   document.getElementById('photo-other-input').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') { e.preventDefault(); addPhotoTag(); }
+  });
+  document.getElementById('api-key-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); saveApiKey(); }
   });
 });
 
@@ -411,6 +467,15 @@ function getInfo() {
 }
 
 async function generate() {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    const e = document.getElementById('err');
+    e.textContent = '🔑 APIキーが設定されていません。画面上部の「APIキー設定」に入力して「保存」してください。';
+    e.classList.add('on');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => e.classList.remove('on'), 5000);
+    return;
+  }
   if (activePlats.length === 0) {
     const e = document.getElementById('err');
     e.textContent = '投稿先を1つ以上選んでください！';
@@ -481,10 +546,15 @@ ${photoContext}
       activePlats.map(async plat => {
         const res = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-requests-allowed': 'true'
+          },
           body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1000,
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 2000,
             messages: [{ role: 'user', content: prompts[plat] }]
           })
         });
