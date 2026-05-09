@@ -13,7 +13,7 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Zen Kaku Gothic New',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:50px;}
 
-.header{background:var(--green);color:white;padding:18px 20px 14px;position:sticky;top:0;z-index:100;}
+.header{background:var(--gl);color:var(--text);padding:18px 20px 14px;position:sticky;top:0;z-index:100;}
 .header-inner{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
 .header h1{font-family:'Shippori Mincho',serif;font-size:16px;font-weight:600;letter-spacing:0.05em;}
 .hsub{font-size:10px;opacity:0.7;margin-top:2px;}
@@ -37,23 +37,23 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 
 .tag-sel{display:flex;flex-wrap:wrap;gap:7px;}
 .topt{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);font-size:12px;color:var(--muted);cursor:pointer;background:white;transition:all 0.15s;user-select:none;}
-.topt.on{background:var(--green);border-color:var(--green);color:white;}
+.topt.on{background:var(--gl);border-color:var(--gm);color:var(--text);}
 
 .plat-row{display:flex;gap:8px;}
 .pbtn{flex:1;padding:12px 6px;border-radius:var(--rsm);border:1.5px solid var(--border);background:white;font-size:12px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--muted);cursor:pointer;font-weight:700;text-align:center;transition:all 0.15s;line-height:1.6;}
 .pbtn.on{border-color:var(--green);background:var(--gl);color:var(--green);}
 
-.gen-btn{width:100%;padding:16px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;letter-spacing:0.05em;}
+.gen-btn{width:100%;padding:16px;background:var(--gl);color:var(--text);border:none;border-radius:var(--radius);font-size:15px;font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;letter-spacing:0.05em;}
 .gen-btn:active{transform:scale(0.98);}
 .gen-btn:disabled{background:var(--gm);cursor:not-allowed;}
-.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;display:none;}
+.spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,0.2);border-top-color:var(--text);border-radius:50%;animation:spin 0.8s linear infinite;display:none;}
 .gen-btn.loading .spinner{display:block;}
 .gen-btn.loading .btext{display:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 .tabs{display:flex;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:6px;gap:4px;}
 .tab{flex:1;padding:9px 6px;border-radius:10px;border:none;background:transparent;font-size:12px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--muted);cursor:pointer;font-weight:700;transition:all 0.15s;text-align:center;}
-.tab.on{background:var(--green);color:white;}
+.tab.on{background:var(--gl);color:var(--text);}
 
 .panel{display:none;flex-direction:column;gap:12px;}
 .panel.on{display:flex;}
@@ -61,14 +61,14 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
 .rblock{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
 .rhead{padding:12px 16px;background:var(--gl);display:flex;align-items:center;justify-content:space-between;}
 .rtitle{font-size:12px;font-weight:700;color:var(--green);}
-.cbtn{padding:5px 12px;background:var(--green);color:white;border:none;border-radius:20px;font-size:11px;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;font-weight:700;transition:all 0.15s;}
+.cbtn{padding:5px 12px;background:var(--gl);color:var(--text);border:none;border-radius:20px;font-size:11px;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;font-weight:700;transition:all 0.15s;}
 .cbtn.done{background:var(--accent);}
 .rtext{padding:14px 16px;font-size:13px;line-height:1.9;color:var(--text);white-space:pre-wrap;word-break:break-all;}
 
 .slide-list{display:flex;flex-direction:column;gap:10px;padding:14px 16px;}
 .sitem{border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;}
 .shead{padding:9px 13px;background:var(--gl);display:flex;align-items:center;gap:8px;}
-.snum{width:22px;height:22px;border-radius:50%;background:var(--green);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.snum{width:22px;height:22px;border-radius:50%;background:var(--gl);color:var(--text);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .stitle{font-size:12px;font-weight:700;color:var(--green);}
 .sbody{padding:11px 13px;font-size:13px;line-height:1.75;color:var(--text);}
 .sf{margin-bottom:7px;}
@@ -118,7 +118,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
         <label>APIキー</label>
         <div style="display:flex;gap:8px;align-items:center;">
           <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;">
-          <button onclick="saveApiKey()" style="padding:10px 14px;background:var(--green);color:white;border:none;border-radius:var(--rsm);font-size:13px;font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;">保存</button>
+          <button onclick="saveApiKey()" style="padding:10px 14px;background:var(--gl);color:var(--text);border:none;border-radius:var(--rsm);font-size:13px;font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;">保存</button>
         </div>
         <div class="hint">
           💡 取得方法：<a href="https://console.anthropic.com" target="_blank" style="color:var(--green);">console.anthropic.com</a> でアカウント作成 → API Keys → Create Key<br>
@@ -170,7 +170,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.6;}
       </div>
       <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
         <input type="text" id="photo-other-input" placeholder="その他（例：窓際で自然光）" style="flex:1;">
-        <button onclick="addPhotoTag()" style="padding:10px 14px;background:var(--green);color:white;border:none;border-radius:var(--rsm);font-size:13px;font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;">追加</button>
+        <button onclick="addPhotoTag()" style="padding:10px 14px;background:var(--gl);color:var(--text);border:none;border-radius:var(--rsm);font-size:13px;font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;">追加</button>
       </div>
       <div class="tag-sel" id="photo-custom-tags" style="margin-top:6px;"></div>
     </div>
