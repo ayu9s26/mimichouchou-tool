@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>mimichouchou 投稿サポート</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f2ee; --card:#ffffff; --border:#e2ddd8; --text:#2a2522; --muted:#8a827a;
+  --green:#3a5a4a; --gl:#e8f0ec; --gm:#9ab8a8; --accent:#c4785a; --radius:16px; --rsm:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Zen Kaku Gothic New',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:50px;}
+
+.header{background:var(--green);color:white;padding:18px 20px 14px;position:sticky;top:0;z-index:100;}
+.header-inner{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.header h1{font-family:'Shippori Mincho',serif;font-size:16px;font-weight:600;letter-spacing:0.05em;}
+.hsub{font-size:10px;opacity:0.7;margin-top:2px;}
+
+.main{max-width:520px;margin:0 auto;padding:20px 16px;display:flex;flex-direction:column;gap:16px;}
+
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.card-header{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.cicon{width:32px;height:32px;border-radius:8px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ctitle{font-size:14px;font-weight:700;color:var(--green);}
+.cdesc{font-size:11px;color:var(--muted);margin-top:1px;}
+.card-body{padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
+
+.field{display:flex;flex-direction:column;gap:5px;}
+label{font-size:12px;font-weight:700;color:var(--green);}
+.req{color:var(--accent);font-size:10px;margin-left:4px;}
+input[type="text"],input[type="number"],textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--rsm);font-size:14px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--text);background:#fdfcfb;transition:border-color 0.2s;outline:none;-webkit-appearance:none;}
+input:focus,textarea:focus{border-color:var(--gm);background:white;}
+textarea{resize:vertical;min-height:80px;line-height:1.6;}
+.hint{font-size:11px;color:var(--muted);line-height:1.5;}
+
+.tag-sel{display:flex;flex-wrap:wrap;gap:7px;}
+.topt{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);font-size:12px;color:var(--muted);cursor:pointer;background:white;transition:all 0.15s;user-select:none;}
+.topt.on{background:var(--green);border-color:var(--green);color:white;}
+
+.plat-row{display:flex;gap:8px;}
+.pbtn{flex:1;padding:12px 6px;border-radius:var(--rsm);border:1.5px solid var(--border);background:white;font-size:12px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--muted);cursor:pointer;font-weight:700;text-align:center;transition:all 0.15s;line-height:1.6;}
+.pbtn.on{border-color:var(--green);background:var(--gl);color:var(--green);}
+
+.gen-btn{width:100%;padding:16px;background:var(--green);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;letter-spacing:0.05em;}
+.gen-btn:active{transform:scale(0.98);}
+.gen-btn:disabled{background:var(--gm);cursor:not-allowed;}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;display:none;}
+.gen-btn.loading .spinner{display:block;}
+.gen-btn.loading .btext{display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.tabs{display:flex;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:6px;gap:4px;}
+.tab{flex:1;padding:9px 6px;border-radius:10px;border:none;background:transparent;font-size:12px;font-family:'Zen Kaku Gothic New',sans-serif;color:var(--muted);cursor:pointer;font-weight:700;transition:all 0.15s;text-align:center;}
+.tab.on{background:var(--green);color:white;}
+
+.panel{display:none;flex-direction:column;gap:12px;}
+.panel.on{display:flex;}
+
+.rblock{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.rhead{padding:12px 16px;background:var(--gl);display:flex;align-items:center;justify-content:space-between;}
+.rtitle{font-size:12px;font-weight:700;color:var(--green);}
+.cbtn{padding:5px 12px;background:var(--green);color:white;border:none;border-radius:20px;font-size:11px;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;font-weight:700;transition:all 0.15s;}
+.cbtn.done{background:var(--accent);}
+.rtext{padding:14px 16px;font-size:13px;line-height:1.9;color:var(--text);white-space:pre-wrap;word-break:break-all;}
+
+.slide-list{display:flex;flex-direction:column;gap:10px;padding:14px 16px;}
+.sitem{border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;}
+.shead{padding:9px 13px;background:var(--gl);display:flex;align-items:center;gap:8px;}
+.snum{width:22px;height:22px;border-radius:50%;background:var(--green);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.stitle{font-size:12px;font-weight:700;color:var(--green);}
+.sbody{padding:11px 13px;font-size:13px;line-height:1.75;color:var(--text);}
+.sf{margin-bottom:7px;}
+.sf:last-child{margin-bottom:0;}
+.sfl{font-size:11px;color:var(--muted);margin-bottom:2px;}
+.sfv{font-size:13px;color:var(--text);line-height:1.7;}
+
+.ht-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:14px 16px;}
+.htpill{padding:5px 11px;background:var(--gl);border-radius:20px;font-size:12px;color:var(--green);font-weight:700;}
+
+.results{display:none;flex-direction:column;gap:16px;}
+.results.on{display:flex;}
+.err{background:#fff5f5;border:1px solid #f0c0c0;border-radius:var(--rsm);padding:12px 16px;font-size:13px;color:#c04040;display:none;}
+.err.on{display:block;}
+.lmsg{text-align:center;padding:24px;color:var(--muted);font-size:13px;display:none;}
+.lmsg.on{display:block;}
+.dots::after{content:'';animation:da 1.2s steps(4,end) infinite;}
+@keyframes da{0%,20%{content:''}40%{content:'.'}60%{content:'..'}80%,100%{content:'...'}}
+.schint{text-align:center;font-size:11px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1>🎀 mimichouchou 投稿おたすけツール</h1>
+      <div class="hsub">作品情報を入れるだけで投稿文が自動完成</div>
+    </div>
+    <div style="font-size:22px">🌿</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- 投稿先選択 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="cicon">📲</div>
+      <div>
+        <div class="ctitle">どこに投稿しますか？</div>
+        <div class="cdesc">複数選んでOKです</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="plat-row">
+        <button class="pbtn" data-plat="instagram" onclick="togglePlat(this)">📸<br>インスタ</button>
+        <button class="pbtn" data-plat="minne" onclick="togglePlat(this)">🛍️<br>minne</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 写真アドバイス -->
+  <div class="card">
+    <div class="card-header">
+      <div class="cicon">📷</div>
+      <div>
+        <div class="ctitle">今ある写真を教えてください</div>
+        <div class="cdesc">チェックすると写真アドバイスが最適化されます</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="hint" style="margin-bottom:4px;">今撮影済みの写真にチェックを入れてください</div>
+      <div class="tag-sel" id="photo-tags">
+        <span class="topt" data-val="全体・正面">全体・正面</span>
+        <span class="topt" data-val="指で持ったサイズ感">指で持ったサイズ感</span>
+        <span class="topt" data-val="クローズアップ・細部">クローズアップ・細部</span>
+        <span class="topt" data-val="自立している様子">自立している様子</span>
+        <span class="topt" data-val="複数並べたシリーズ">複数並べたシリーズ</span>
+        <span class="topt" data-val="背景小物と一緒に">背景小物と一緒に</span>
+        <span class="topt" data-val="手に持って使用シーン">手に持って使用シーン</span>
+        <span class="topt" data-val="冷蔵庫に貼った様子">冷蔵庫に貼った様子</span>
+        <span class="topt" data-val="プレゼント包装">プレゼント包装</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+        <input type="text" id="photo-other-input" placeholder="その他（例：窓際で自然光）" style="flex:1;">
+        <button onclick="addPhotoTag()" style="padding:10px 14px;background:var(--green);color:white;border:none;border-radius:var(--rsm);font-size:13px;font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;">追加</button>
+      </div>
+      <div class="tag-sel" id="photo-custom-tags" style="margin-top:6px;"></div>
+    </div>
+  </div>
+
+  <!-- 作品情報 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="cicon">✏️</div>
+      <div>
+        <div class="ctitle">作品情報を入力</div>
+        <div class="cdesc">必須だけ入れればOK、多いほど文章が良くなります</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="field">
+        <label>作品タイトル</label>
+        <input type="text" id="f-title" placeholder="例：ケロさんの梅雨空クッキー缶図鑑">
+        <div class="hint">💡 空欄のままにするとAIがタイトル案を3〜5個提案します<br>　 書いた場合はそれをベースにブラッシュアップ案も出します</div>
+      </div>
+
+      <div class="field">
+        <label>テーマ・世界観 <span class="req">必須</span></label>
+        <textarea id="f-theme" placeholder="例：梅雨、カエル、紫陽花、雨粒クッキー、しとしとした雨の日の癒し、図鑑をひらくような気分"></textarea>
+        <div class="hint">作品のイメージや雰囲気を自由に書いてください</div>
+      </div>
+
+      <div class="field">
+        <label>素材（複数選択OK）</label>
+        <div class="tag-sel">
+          <span class="topt on" data-val="樹脂粘土">樹脂粘土</span>
+          <span class="topt" data-val="レジン">レジン</span>
+          <span class="topt" data-val="紙">紙</span>
+          <span class="topt" data-val="布">布</span>
+          <span class="topt" data-val="木材">木材</span>
+        </div>
+        <input type="text" id="f-mat-other" placeholder="その他（自由記入）" style="margin-top:8px;">
+      </div>
+
+      <div class="field">
+        <label>サイズ</label>
+        <input type="text" id="f-size" placeholder="例：縦85mm × 横60mm × 奥行20mm">
+      </div>
+
+      <div class="field">
+        <label>価格（円）</label>
+        <input type="number" id="f-price" placeholder="例：6800">
+      </div>
+
+      <div class="field">
+        <label>販売数</label>
+        <input type="text" id="f-stock" placeholder="例：2点限定">
+      </div>
+
+      <div class="field">
+        <label>販売日時・場所</label>
+        <input type="text" id="f-date" placeholder="例：5/16（土）17:30 minne にて">
+      </div>
+
+      <div class="field">
+        <label>作品の特徴・こだわり</label>
+        <textarea id="f-features" placeholder="例：背面マグネット仕様で冷蔵庫にも飾れる。自立もする。すべて固定されており観賞用。"></textarea>
+      </div>
+
+      <div class="field">
+        <label>おすすめの使い方・飾り方</label>
+        <textarea id="f-usage" placeholder="例：ミニチュアコレクション、デスクの癒しに、カエル好きへのプレゼント"></textarea>
+      </div>
+
+      <div class="field">
+        <label>シリーズ名（あれば）</label>
+        <input type="text" id="f-series" placeholder="例：mimichouchouミニチュアフォトフレームシリーズ">
+      </div>
+
+      <div class="field">
+        <label>その他・補足メモ</label>
+        <textarea id="f-memo" placeholder="伝えたいことがあれば自由に" style="min-height:60px;"></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 生成ボタン -->
+  <button class="gen-btn" id="gen-btn" onclick="generate()">
+    <div class="spinner"></div>
+    <span class="btext">✨ 投稿文を自動生成する</span>
+  </button>
+
+  <div class="err" id="err"></div>
+  <div class="lmsg" id="lmsg">AIが文章を生成中です<span class="dots"></span></div>
+
+  <!-- 結果 -->
+  <div class="results" id="results">
+    <div class="schint">✅ 生成完了！コピーして使ってください</div>
+    <div class="tabs" id="tabs"></div>
+
+    <div class="panel" id="panel-instagram">
+      <div class="rblock" id="ig-title-block" style="display:none">
+        <div class="rhead"><div class="rtitle">💡 タイトル案</div><button class="cbtn" onclick="doCopy('ig-title-suggestions',this)">コピー</button></div>
+        <div class="rtext" id="ig-title-suggestions"></div>
+      </div>
+      <div class="rblock">
+        <div class="rhead"><div class="rtitle">📝 キャプション</div><button class="cbtn" onclick="doCopy('ig-cap',this)">コピー</button></div>
+        <div class="rtext" id="ig-cap"></div>
+      </div>
+      <div class="rblock">
+        <div class="rhead"><div class="rtitle">🏷️ ハッシュタグ</div><button class="cbtn" onclick="doCopy('ig-ht-raw',this)">コピー</button></div>
+        <div class="ht-wrap" id="ig-ht-pills"></div>
+        <div id="ig-ht-raw" style="display:none"></div>
+      </div>
+      <div class="rblock">
+        <div class="rhead"><div class="rtitle">🖼️ スライド構成案</div></div>
+        <div class="slide-list" id="ig-slides"></div>
+      </div>
+      <div class="rblock" id="ig-photo-block" style="display:none">
+        <div class="rhead"><div class="rtitle">📷 写真アドバイス</div></div>
+        <div class="sbody" style="padding:14px 16px;display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <div class="sfl" style="margin-bottom:4px;">✅ 今ある写真の使い方</div>
+            <div class="sfv" id="ig-photo-has" style="white-space:pre-wrap;"></div>
+          </div>
+          <div style="height:1px;background:var(--border);"></div>
+          <div>
+            <div class="sfl" style="margin-bottom:4px;">📸 追加で撮るといい写真</div>
+            <div class="sfv" id="ig-photo-missing" style="white-space:pre-wrap;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-minne">
+      <div class="rblock">
+        <div class="rhead"><div class="rtitle">📋 タイトル（おすすめ）</div><button class="cbtn" onclick="doCopy('mn-title',this)">コピー</button></div>
+        <div class="rtext" id="mn-title"></div>
+      </div>
+      <div class="rblock" id="mn-title-block" style="display:none">
+        <div class="rhead"><div class="rtitle">💡 タイトル案（全候補）</div><button class="cbtn" onclick="doCopy('mn-title-suggestions',this)">コピー</button></div>
+        <div class="rtext" id="mn-title-suggestions"></div>
+      </div>
+      <div class="rblock">
+        <div class="rhead"><div class="rtitle">📄 商品説明文</div><button class="cbtn" onclick="doCopy('mn-desc',this)">コピー</button></div>
+        <div class="rtext" id="mn-desc"></div>
+      </div>
+      <div class="rblock">
+        <div class="rhead"><div class="rtitle">🏷️ ハッシュタグ</div><button class="cbtn" onclick="doCopy('mn-ht-raw',this)">コピー</button></div>
+        <div class="ht-wrap" id="mn-ht-pills"></div>
+        <div id="mn-ht-raw" style="display:none"></div>
+      </div>
+      <div class="rblock" id="mn-photo-block" style="display:none">
+        <div class="rhead"><div class="rtitle">📷 写真アドバイス（minne向け）</div></div>
+        <div class="sbody" style="padding:14px 16px;display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <div class="sfl" style="margin-bottom:4px;">✅ 今ある写真の使い方</div>
+            <div class="sfv" id="mn-photo-has" style="white-space:pre-wrap;"></div>
+          </div>
+          <div style="height:1px;background:var(--border);"></div>
+          <div>
+            <div class="sfl" style="margin-bottom:4px;">📸 追加で撮るといい写真</div>
+            <div class="sfv" id="mn-photo-missing" style="white-space:pre-wrap;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function addPhotoTag() {
+  const input = document.getElementById('photo-other-input');
+  const val = input.value.trim();
+  if (!val) return;
+  const container = document.getElementById('photo-custom-tags');
+  const tag = document.createElement('span');
+  tag.className = 'topt on';
+  tag.dataset.val = val;
+  tag.style.display = 'flex';
+  tag.style.alignItems = 'center';
+  tag.style.gap = '4px';
+  tag.innerHTML = `${val} <span onclick="this.parentElement.remove()" style="font-size:14px;line-height:1;opacity:0.7;cursor:pointer;">×</span>`;
+  tag.addEventListener('click', (e) => {
+    if (e.target.tagName !== 'SPAN' || !e.target.getAttribute('onclick')) {
+      tag.classList.toggle('on');
+    }
+  });
+  container.appendChild(tag);
+  input.value = '';
+}
+
+// Enterキーでも追加できる
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('photo-other-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); addPhotoTag(); }
+  });
+});
+
+let activePlats = [];
+
+function togglePlat(btn) {
+  const p = btn.dataset.plat;
+  btn.classList.toggle('on');
+  activePlats = activePlats.includes(p)
+    ? activePlats.filter(x => x !== p)
+    : [...activePlats, p];
+}
+
+document.querySelectorAll('.topt').forEach(el => {
+  el.addEventListener('click', () => el.classList.toggle('on'));
+});
+
+function doCopy(id, btn) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.innerText || el.textContent).then(() => {
+    btn.textContent = '✅ 済';
+    btn.classList.add('done');
+    setTimeout(() => { btn.textContent = 'コピー'; btn.classList.remove('done'); }, 2000);
+  });
+}
+
+function buildTabs() {
+  const el = document.getElementById('tabs');
+  el.innerHTML = '';
+  const labels = { instagram:'📸 インスタ', minne:'🛍️ minne' };
+  activePlats.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.className = 'tab' + (i === 0 ? ' on' : '');
+    b.textContent = labels[p];
+    b.onclick = () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+      b.classList.add('on');
+      document.querySelectorAll('.panel').forEach(p2 => p2.classList.remove('on'));
+      document.getElementById('panel-' + p).classList.add('on');
+    };
+    el.appendChild(b);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  if (activePlats[0]) document.getElementById('panel-' + activePlats[0]).classList.add('on');
+}
+
+function getInfo() {
+  const mats = [...document.querySelectorAll('.topt.on')].map(e => e.dataset.val);
+  const mo = document.getElementById('f-mat-other').value.trim();
+  if (mo) mats.push(mo);
+  const photos = [
+    ...[...document.querySelectorAll('#photo-tags .topt.on')].map(e => e.dataset.val),
+    ...[...document.querySelectorAll('#photo-custom-tags .topt.on')].map(e => e.dataset.val)
+  ];
+  return {
+    text: `作品タイトル：${document.getElementById('f-title').value.trim()}
+テーマ・世界観：${document.getElementById('f-theme').value.trim()}
+素材：${mats.join('、') || '未記入'}
+サイズ：${document.getElementById('f-size').value.trim() || '未記入'}
+価格：${document.getElementById('f-price').value.trim() ? document.getElementById('f-price').value.trim()+'円' : '未記入'}
+販売数：${document.getElementById('f-stock').value.trim() || '未記入'}
+販売日時・場所：${document.getElementById('f-date').value.trim() || '未記入'}
+特徴・こだわり：${document.getElementById('f-features').value.trim() || '未記入'}
+おすすめの使い方：${document.getElementById('f-usage').value.trim() || '未記入'}
+シリーズ名：${document.getElementById('f-series').value.trim() || '未記入'}
+補足：${document.getElementById('f-memo').value.trim() || '未記入'}`,
+    photos: photos
+  };
+}
+
+async function generate() {
+  if (activePlats.length === 0) {
+    const e = document.getElementById('err');
+    e.textContent = '投稿先を1つ以上選んでください！';
+    e.classList.add('on');
+    setTimeout(() => e.classList.remove('on'), 3000);
+    return;
+  }
+  if (!document.getElementById('f-theme').value.trim()) {
+    const e = document.getElementById('err');
+    e.textContent = '「テーマ・世界観」は必須です！';
+    e.classList.add('on');
+    setTimeout(() => e.classList.remove('on'), 3000);
+    return;
+  }
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true; btn.classList.add('loading');
+  document.getElementById('lmsg').classList.add('on');
+  document.getElementById('results').classList.remove('on');
+  document.getElementById('err').classList.remove('on');
+
+  const infoData = getInfo();
+  const info = infoData.text;
+  const hasPhotos = infoData.photos;
+  const hasTitle = document.getElementById('f-title').value.trim() !== '';
+
+  const photoContext = hasPhotos.length > 0
+    ? `現在撮影済みの写真：${hasPhotos.join('、')}\n※上記以外で追加撮影をすすめる写真と、各スライドへの写真の割り当てアドバイスも含めてください。`
+    : `撮影済みの写真情報はありません。どんな写真を撮ればいいかゼロから提案してください。`;
+
+  const titleInstruction = hasTitle
+    ? `作品タイトルは「${document.getElementById('f-title').value.trim()}」です。このタイトルをベースに、より魅力的なブラッシュアップ案を2〜3個も "title_suggestions" フィールドに追加してください。`
+    : `作品タイトルは未定です。テーマ・世界観をもとに、魅力的なタイトル案を3〜5個 "title_suggestions" フィールドに改行区切りで提案してください。`;
+
+  const titleMinneInstruction = hasTitle
+    ? `作品タイトルは「${document.getElementById('f-title').value.trim()}」です。このタイトルをベースに検索キーワードを含めた最適なminneタイトルに仕上げてください。また "title_suggestions" フィールドにブラッシュアップ案を2〜3個も出してください。`
+    : `作品タイトルは未定です。テーマ・世界観をもとに、minneに最適なタイトル案を3〜5個 "title_suggestions" フィールドに改行区切りで提案してください。"title" フィールドにはその中で一番おすすめのものを入れてください。`;
+
+  const prompts = {
+    instagram: `あなたはInstagramマーケティングの専門家です。以下のミニチュア作品情報をもとに、Instagram投稿用コンテンツをJSON形式で生成してください。
+
+${titleInstruction}
+
+作品情報：
+${info}
+
+写真情報：
+${photoContext}
+
+以下のJSONのみ出力してください（説明文・コードブロック記号不要）：
+{"title_suggestions":"タイトル案（改行区切り）","caption":"キャプション本文（絵文字あり・改行あり・親しみやすい文体・最初の2行で引き込む・400字程度）","hashtags":"ハッシュタグをスペース区切りで10〜12個","photo_advice":{"has_photos":"今ある写真の使い方アドバイス（各写真をどのスライドに使うかも含めて具体的に）","missing_photos":"追加で撮るといい写真のリスト（各写真の撮り方ポイントも一言添えて・改行区切り）"},"slides":[{"num":1,"role":"世界観・つかみ","catchcopy":"メインコピー15字以内","subcopy":"サブコピー20字以内","photo":"このスライドに使う写真と撮影アドバイス"},{"num":2,"role":"作品紹介","points":"3つの魅力（改行区切り）","photo":"このスライドに使う写真と撮影アドバイス"},{"num":3,"role":"告知・行動促進","main":"日時・価格・限定数の告知","cta":"行動喚起の一言","photo":"このスライドに使う写真と撮影アドバイス"}]}`,
+
+    minne: `あなたはminneのプロコピーライターです。以下のミニチュア作品情報をもとに、minne商品ページ用コンテンツをJSON形式で生成してください。
+
+${titleMinneInstruction}
+
+作品情報：
+${info}
+
+写真情報：
+${photoContext}
+
+以下のJSONのみ出力してください（説明文・コードブロック記号不要）：
+{"title":"minneタイトル（検索キーワード含む・40字以内）","title_suggestions":"タイトル案（改行区切り）","description":"商品説明文（世界観→シリーズ紹介→作品の特徴→飾り方→サイズ・素材→注意事項の順・絵文字や区切り線で読みやすく・600〜800字）","hashtags":"ハッシュタグをスペース区切りで8〜10個","photo_advice":{"has_photos":"今ある写真のminne向け使い方アドバイス（minneは1枚目が特に重要・具体的に）","missing_photos":"minne商品ページで追加撮影すると効果的な写真リスト（撮影ポイントも一言・改行区切り）"}}`
+  };
+
+  try {
+    const results = await Promise.all(
+      activePlats.map(async plat => {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1000,
+            messages: [{ role: 'user', content: prompts[plat] }]
+          })
+        });
+        if (!res.ok) throw new Error('API error ' + res.status);
+        const d = await res.json();
+        const raw = d.content.map(c => c.text || '').join('');
+        const json = JSON.parse(raw.replace(/```json|```/g,'').trim());
+        return { plat, json };
+      })
+    );
+
+    results.forEach(({ plat, json }) => {
+      if (plat === 'instagram') {
+        // タイトル提案
+        const igTitleBlock = document.getElementById('ig-title-block');
+        if (json.title_suggestions) {
+          document.getElementById('ig-title-suggestions').textContent = json.title_suggestions;
+          igTitleBlock.style.display = 'block';
+        } else {
+          igTitleBlock.style.display = 'none';
+        }
+        document.getElementById('ig-cap').textContent = json.caption || '';
+        const tags = (json.hashtags || '').split(/\s+/).filter(Boolean);
+        document.getElementById('ig-ht-raw').textContent = tags.join(' ');
+        const pillsEl = document.getElementById('ig-ht-pills');
+        pillsEl.innerHTML = '';
+        tags.forEach(t => { const s = document.createElement('span'); s.className='htpill'; s.textContent=t; pillsEl.appendChild(s); });
+        const slidesEl = document.getElementById('ig-slides');
+        slidesEl.innerHTML = '';
+        (json.slides||[]).forEach(s => {
+          let body = '';
+          if (s.catchcopy) body += `<div class="sf"><div class="sfl">メインコピー</div><div class="sfv">${s.catchcopy}</div></div>`;
+          if (s.subcopy) body += `<div class="sf"><div class="sfl">サブコピー</div><div class="sfv">${s.subcopy}</div></div>`;
+          if (s.points) body += `<div class="sf"><div class="sfl">ポイント</div><div class="sfv">${s.points.replace(/\n/g,'<br>')}</div></div>`;
+          if (s.main) body += `<div class="sf"><div class="sfl">告知テキスト</div><div class="sfv">${s.main}</div></div>`;
+          if (s.cta) body += `<div class="sf"><div class="sfl">行動喚起</div><div class="sfv">${s.cta}</div></div>`;
+          if (s.photo) body += `<div class="sf"><div class="sfl">📷 写真アドバイス</div><div class="sfv" style="color:var(--muted)">${s.photo}</div></div>`;
+          const item = document.createElement('div');
+          item.className = 'sitem';
+          item.innerHTML = `<div class="shead"><div class="snum">${s.num}</div><div class="stitle">${s.role}</div></div><div class="sbody">${body}</div>`;
+          slidesEl.appendChild(item);
+        });
+        // 写真アドバイス
+        const igPhotoBlock = document.getElementById('ig-photo-block');
+        if (json.photo_advice) {
+          document.getElementById('ig-photo-has').textContent = json.photo_advice.has_photos || '';
+          document.getElementById('ig-photo-missing').textContent = json.photo_advice.missing_photos || '';
+          igPhotoBlock.style.display = 'block';
+        } else {
+          igPhotoBlock.style.display = 'none';
+        }
+      }
+      if (plat === 'minne') {
+        document.getElementById('mn-title').textContent = json.title || '';
+        // タイトル提案
+        const mnTitleBlock = document.getElementById('mn-title-block');
+        if (json.title_suggestions) {
+          document.getElementById('mn-title-suggestions').textContent = json.title_suggestions;
+          mnTitleBlock.style.display = 'block';
+        } else {
+          mnTitleBlock.style.display = 'none';
+        }
+        document.getElementById('mn-desc').textContent = json.description || '';
+        const tags = (json.hashtags || '').split(/\s+/).filter(Boolean);
+        document.getElementById('mn-ht-raw').textContent = tags.join(' ');
+        const pillsEl = document.getElementById('mn-ht-pills');
+        pillsEl.innerHTML = '';
+        tags.forEach(t => { const s = document.createElement('span'); s.className='htpill'; s.textContent=t; pillsEl.appendChild(s); });
+        // 写真アドバイス
+        const mnPhotoBlock = document.getElementById('mn-photo-block');
+        if (json.photo_advice) {
+          document.getElementById('mn-photo-has').textContent = json.photo_advice.has_photos || '';
+          document.getElementById('mn-photo-missing').textContent = json.photo_advice.missing_photos || '';
+          mnPhotoBlock.style.display = 'block';
+        } else {
+          mnPhotoBlock.style.display = 'none';
+        }
+      }
+    });
+
+    buildTabs();
+    document.getElementById('results').classList.add('on');
+    setTimeout(() => document.getElementById('results').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+
+  } catch(e) {
+    const err = document.getElementById('err');
+    err.textContent = 'エラーが発生しました。もう一度お試しください。（' + e.message + '）';
+    err.classList.add('on');
+  }
+
+  btn.disabled = false; btn.classList.remove('loading');
+  document.getElementById('lmsg').classList.remove('on');
+}
+</script>
+</body>
+</html>
