@@ -11,7 +11,11 @@
   --green:#4a7a62; --gl:#B2DEC6; --gm:#88c4a8; --accent:#c4785a; --radius:16px; --rsm:10px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Zen Kaku Gothic New',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:50px;}
+body{font-family:'Zen Kaku Gothic New',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--gl);border-top:1.5px solid var(--gm);display:flex;z-index:200;}
+.nav-item{flex:1;padding:10px 4px 18px;text-align:center;text-decoration:none;color:var(--muted);font-size:10px;font-family:'Zen Kaku Gothic New',sans-serif;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.nav-item.active{color:var(--green);}
+.nav-icon{font-size:22px;}
 
 .header{background:var(--gl);color:var(--text);padding:18px 20px 14px;position:sticky;top:0;z-index:100;}
 .header-inner{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
@@ -247,6 +251,17 @@ function copyPrompt() {
     }, 3000);
   });
 }
-</script>
+</script><nav class="bottom-nav">
+  <a class="nav-item" href="../">
+    <span class="nav-icon">📝</span>投稿ツール
+  </a>
+  <a class="nav-item active" href="./">
+    <span class="nav-icon">🛍️</span>Etsy
+  </a>
+  <a class="nav-item" href="../biz/">
+    <span class="nav-icon">📊</span>管理
+  </a>
+</nav>
+
 </body>
 </html>
